@@ -1,11 +1,37 @@
 """
-paths.py -> 
+paths.py -> Helps to build paths based on production and development environment configs.
+
+NOTE : Still contains all the paths for the local devs
 """
 
-from app.config.loader import get_config
+from pathlib import Path
+from typing import Literal,Optional,TypedDict,Tuple,List
+from dataclasses import dataclass
+from enum import Enum
+from configs import config
 
-config = get_config()
+__ROOT__ = Path(__file__).resolve().absolute().parents[1]
 
-assets = {
-    "short": config.ASSETS_DIR / "videos/short"
+class PathType(Enum):
+    DEVPATH = auto()
+    PRODPATH = auto()
+
+
+@dataclass
+class PathConfig:
+    path_type: PathType
+    base_path: str
+
+
+downloaded_assets = {
+    audio : Path(__ROOT__ / "assets/audio"),
+    video : Path(__ROOT__ / "assets/video"),
+    image : Path(__ROOT__ / "assets/image"),
+    gifs : Path(__ROOT__ / "assets/gifs"),
+    music : Path(__ROOT__ / "assets/music"),
+    song : Path(__ROOT__ / "assets/song"),
 }
+
+SEARCH_QUERIES = Path(__ROOT__ / "config/json/search_terms.json")
+    
+    
