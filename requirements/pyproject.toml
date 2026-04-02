@@ -3,40 +3,115 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "social_automation-agent"
+name = "sma-agent"
 version = "1.0.0"
-description = "A classical product to manage different social media handles."
+description = "A scalable AI-powered system to automate and manage multiple social media platforms."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
+
 authors = [
     {name = "RajTewari01"}
 ]
+
 keywords = [
-    "socials",
-    "social handlers",
-    "social management",
-    "ai",
-    "llms",
-    "ffmpeg",
-    "automantion agent",
-    "socails manager",
-    "low-vram"
-]  
+    "social-media",
+    "automation",
+    "ai-agent",
+    "llm",
+    "content-automation",
+    "scheduler",
+    "multi-platform"
+]
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Multimedia :: Graphics",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
+
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/RajTewari01/image-gen"
-Documentation = "https://github.com/RajTewari01/image-gen/tree/main/docs"
-Repository = "https://github.com/RajTewari01/image-gen"
-Issues = "https://github.com/RajTewari01/image-gen/issues"
+Homepage = "https://github.com/RajTewari01/SMA-Agent"
+Documentation = "https://github.com/RajTewari01/SMA-Agent/tree/main/docs"
+Repository = "https://github.com/RajTewari01/SMA-Agent"
+Issues = "https://github.com/RajTewari01/SMA-Agent/issues"
+
+[project.optional-dependencies]
+
+ai = [
+    "torch",
+    "llama-cpp-python",
+    "langchain",
+    "scikit-learn",
+    "pandas",
+    "numpy"
+]
+
+automation = [
+    "selenium",
+    "playwright",
+    "scrapy"
+]
+
+socials = [
+    "instagrapi",
+    "discord.py",
+    "tweepy",
+    "TikTokApi",
+    "praw",
+    "facebook-sdk",
+    "google-api-python-client",
+    "google-auth",
+    "google-auth-oauthlib",
+    "requests-oauthlib"
+]
+
+media = [
+    "yt-dlp",
+    "moviepy",
+    "imageio",
+    "imageio-ffmpeg",
+    "pillow"
+]
+
+networking = [
+    "requests",
+    "httpx",
+    "websocket-client",
+    "aiohttp"
+]
+
+core = [
+    "pydantic",
+    "rich",
+    "click",
+    "tqdm"
+]
+
+all = [
+    "sma-agent[ai]",
+    "sma-agent[automation]",
+    "sma-agent[socials]",
+    "sma-agent[media]",
+    "sma-agent[networking]",
+    "sma-agent[core]"
+]
+
+[project.scripts]
+sma-agent = "sma_agent.runner:main"
+
+[tool.setuptools.packages.find]
+include = ["sma_agent*", "configs*", "scripts*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "F401", "E722", "E402", "E741", "E701"]
