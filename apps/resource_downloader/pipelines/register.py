@@ -55,6 +55,7 @@ Structures :
 PIPELINE_REGISTRY : Dict[str,Dict[str,Any]] = {}
 
 ALLOWED_MEDIA_TYPES = {'image', 'video', 'music', 'gifs', 'song'}
+
 def register_pipeline(
     name : str ,
     keywords : List[str] | None = None,
@@ -81,5 +82,89 @@ def register_pipeline(
         }
         return func
     return decorator
+
+def get_pipeline_by_name(name : str ) -> Dict[str,Any] | None:
+    """
+    Directly retrieve a pipeline by its unique name.
+    
+    Args:
+        name: The unique string ID of the pipeline.
+        
+    Returns:
+        The pipeline metadata dict, or None if not found.
+    """
+    return PIPELINE_REGISTRY.get(name)
+
+def get_all_pipelines() -> Dict[str,Dict[str,Any]] :
+    """Get all registered pipelines."""
+    return PIPELINE_REGISTRY
+
+def get_pipelines_by_media(
+    media_type : Literal['image','video','music','gifs','song']
+    ) -> List[str]:
+    """
+    Returns a list of pipeline names that match the given media type.
+    """
+    return [name for name, data in PIPELINE_REGISTRY.items() if data.get('media_type') == media_type]
+
+def get_pipelines_names() -> List[str] :
+    """
+    Returns a list of registered pipelines to the user.
+    """
+    # or in short list(PIPELINE_REGISTRY.keys())
+    return [name for name in PIPELINE_REGISTRY.keys()] # <just for mine> <- IGNORE THIS COMMENT
+
+# def get_pipeline_by_keywords(params: str | List[str]) -> Dict[str, float]:
+#     """
+#     Returns pipeline names with confidence scores based on keyword overlap.
+#     """
+#     # normalize input into list
+    
+#     query_keywords = params.lower().split() if isinstance(params, str) else [p.lower().strip() for p in params]
+    
+#     results: Dict[str, float] = dict()
+
+#     for name, data in PIPELINE_REGISTRY.items():
+#         pipeline_keywords = data.get("keywords", [])
+#         if not pipeline_keywords:continue
+#         # compute overlap
+#         matches = 0
+#         for kw in pipeline_keywords:
+#             if kw in query_keywords:
+#                 matches += 1
+
+#         if matches == 0:
+#             continue
+
+#         # confidence score (normalized)
+#         score = matches / len(pipeline_keywords)
+#         results[name] = round(score,4)
+#     # optional: sort by confidence (recommended)
+#     results = dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
+#     return results
+    
+# def get_pipeline_by_keywords_using_jaccard(params: str | List[str]) -> Dict[str, float]:
+
+#     query_keywords = set(params.lower().split()) if isinstance(params, str) else set(p.lower().strip() for p in params)
+#     results: Dict[str, float] = {}
+#     for name, data in PIPELINE_REGISTRY.items():
+#         pipeline_keywords = set(data.get("keywords", []))
+#         score = jaccard_similarity(query_keywords, pipeline_keywords)
+#         if score > 0:
+#             results[name] = round(score, 3)
+#     return dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
+
+def discover_pipeline():
+    """
+    Import all pipeline modules to trigger their @register_pipeline decorators.
+    Call this once at startup before using the registry.
+    """
+    # Import all pipeline modules - their decorators auto-register
+    from . import (   # type: ignore
+        pixels
+    )
+    
+# Auto-discover on import (optional - can also call discover_pipelines() manually)
+# discover_pipeline()  # Uncomment to auto-discover
 
 
