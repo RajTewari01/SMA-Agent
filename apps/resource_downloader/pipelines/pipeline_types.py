@@ -27,6 +27,7 @@ class ConfigPipeline:
     download_method: Literal['fast', 'safe'] = 'fast'
     request_limit: int = 50  # API rate limit buffer per day(Rate limiter)
     output_dir: Path | str | None  = None
+    api_name : str = "Internet"
 
     def __post_init__(self):
         """
@@ -45,7 +46,6 @@ class ConfigPipeline:
                 self.output_dir.mkdir(parents=True, exist_ok=True)
 
         # --- Handle count ---
-        
         DEFAULT_COUNT = {
             'video':5,
             'image':25,
@@ -101,3 +101,5 @@ class ConfigPipeline:
                 raise FileNotFoundError("Please ensure the search_terms.json file exists.")
             except Exception as e:
                 raise Exception(f"An error occurred while loading the search terms") from e 
+
+        
