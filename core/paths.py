@@ -5,10 +5,9 @@ NOTE : Still contains all the paths for the local devs
 """
 
 from pathlib import Path
-from typing import Literal,Optional,TypedDict,Tuple,List
 from dataclasses import dataclass
-from enum import Enum
-from configs import config
+from enum import Enum,auto
+from config import config
 
 __ROOT__ = Path(__file__).resolve().absolute().parents[1]
 
@@ -24,12 +23,12 @@ class PathConfig:
 
 
 downloaded_assets = {
-    audio : Path(__ROOT__ / "assets/audio"),
-    video : Path(__ROOT__ / "assets/video"),
-    image : Path(__ROOT__ / "assets/image"),
-    gifs : Path(__ROOT__ / "assets/gifs"),
-    music : Path(__ROOT__ / "assets/music"),
-    song : Path(__ROOT__ / "assets/song"),
+    "audio" : Path(__ROOT__ / "assets/audio"),
+    "video" : Path(__ROOT__ / "assets/video"),
+    "image" : Path(__ROOT__ / "assets/image"),
+    "gifs" : Path(__ROOT__ / "assets/gifs"),
+    "music" : Path(__ROOT__ / "assets/music"),
+    "song" : Path(__ROOT__ / "assets/song"),
 }
 
 SEARCH_QUERIES = Path(__ROOT__ / "config/json/search_terms.json")

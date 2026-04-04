@@ -1,13 +1,13 @@
 """
 pipelines_types.py -> creates a formal format for all pipelines types to follow.
 """
-from typing import Literal,Optional,TypedDict,Tuple,List
+from typing import Literal,Optional,List
 from dataclasses import dataclass,field
 from pathlib import Path
 import random
 import json
 
-__ROOT__ = Path(__file__).resolve().absolute().parents[2]
+__ROOT__ = Path(__file__).resolve().absolute().parents[3]
 
 @dataclass
 class ConfigPipeline:
@@ -57,12 +57,12 @@ class ConfigPipeline:
             self.item_count = DEFAULT_COUNT.get(self.media_type,1)
 
         if self.search_term:
-            self.search_term = self._santize_searchterm(self.search_term)
+            self.search_term = self._sanitize_searchterm(self.search_term)
         
         if not self.search_term:
             self.search_term = self._load_random_searchterm()
 
-        def _santize_searchterm(
+    def _sanitize_searchterm(
             self,
             term :  str
             ) ->str:
@@ -81,7 +81,7 @@ class ConfigPipeline:
             from apps.resource_downloader.engine import BaseGatherer
             return BaseGatherer.sanitize_search_term(term = term)
         
-        def _load_random_searchterm(self) -> str:
+    def _load_random_searchterm(self) -> str:
             """
             Loads a random search term from the search_terms.json file.
             """
@@ -90,7 +90,7 @@ class ConfigPipeline:
                 path.insert(0,str(__ROOT__))
                 from core.paths import SEARCH_QUERIES 
                 import json
-                with open (SEARCH_QUERIES, r) as infile:
+                with open(SEARCH_QUERIES, "r") as infile:
                     data = json.load(infile)
                     needed_data = random.choice(data.get('search_term',[])) 
                     return needed_data
