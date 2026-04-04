@@ -1,7 +1,7 @@
 """
-Pexels Image Pipeline
-======================
-Factory function for downloading high-resolution stock images from Pexels.
+Unsplash Image Pipeline
+========================
+Factory function for downloading high-quality photos from Unsplash.
 
 >>> Registered via @register_pipeline decorator.
 >>> Auto-discovered by discover_pipeline() at startup.
@@ -15,24 +15,24 @@ from .pipeline_types import ConfigPipeline
 
 
 @register_pipeline(
-    name="pexels_image",
-    keywords=["pexels", "stock", "photo", "image", "hd", "wallpaper", "high-res"],
-    description="Pexels — a curated library for high-resolution stock photos.",
+    name="unsplash",
+    keywords=["unsplash", "photography", "creative", "photo", "artistic", "editorial"],
+    description="Unsplash — beautiful, free photos contributed by creators worldwide.",
     media_type="image",
-    api_calls_per_hour=200,
+    api_calls_per_hour=50,
     d_exec=True
 )
-def get_pexels_image_config(
+def get_unsplash_config(
     search_term: str,
     item_count: int = 25,
     download_method: Literal['fast', 'safe'] = 'fast',
     output_dir: Optional[Path | str] = None,
-    request_limit: int = 200,
+    request_limit: int = 50,
     safe_search: Literal['off', 'modest'] = 'off',
     debug: bool = False
 ) -> ConfigPipeline:
     """
-    Factory to create a ConfigPipeline for Pexels image downloads.
+    Factory to create a ConfigPipeline for Unsplash image downloads.
     """
     return ConfigPipeline(
         safe_search=safe_search,
@@ -43,5 +43,5 @@ def get_pexels_image_config(
         download_method=download_method,
         output_dir=output_dir,
         request_limit=request_limit,
-        api_name="Pexels"
+        api_name="Unsplash"
     )

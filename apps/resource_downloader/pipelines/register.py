@@ -203,13 +203,22 @@ def discover_pipeline():
     """
     Import all pipeline modules to trigger their @register_pipeline decorators.
     Call this once at startup before using the registry.
+
+    Registered Pipelines:
+        >>> pexels_image    — Pexels stock photos          (image)
+        >>> pexels_video    — Pexels stock video clips      (video)
+        >>> pixabay_image   — Pixabay royalty-free images   (image)
+        >>> pixabay_video   — Pixabay royalty-free videos   (video)
+        >>> giphy           — Giphy animated GIFs           (gifs)
+        >>> unsplash        — Unsplash creative photos      (image)
+        >>> duckduckgo      — DuckDuckGo web image search   (image)
     """
-    # Import all pipeline modules - their decorators auto-register
-    from . import (   # type: ignore
-        pixels
+    from . import (        # type: ignore
+        pixels,            # pexels_image
+        pixels_video,      # pexels_video
+        pixabay,           # pixabay_image
+        pixabay_video,     # pixabay_video
+        giphy,             # giphy
+        unsplash,          # unsplash
+        duckduckgo,        # duckduckgo
     )
-    
-# Auto-discover on import (optional - can also call discover_pipelines() manually)
-# discover_pipeline()  # Uncomment to auto-discover
-
-
