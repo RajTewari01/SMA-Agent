@@ -37,7 +37,7 @@ jobs:
         run: pip install -e ".[core,networking]"
 
       - name: Run pip-audit
-        run: pip-audit --strict --desc
+        run: pip-audit --strict --desc --skip-editable
 
   secret-scan:
     name: Secret Leak Detection
