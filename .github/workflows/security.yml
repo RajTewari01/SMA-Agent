@@ -42,8 +42,10 @@ jobs:
               data = tomli.load(f)
           deps = data.get('project', {}).get('dependencies', [])
           optional = data.get('project', {}).get('optional-dependencies', {})
-          for group in ['core', 'networking']:
-              deps.extend(optional.get(group, []))
+          for group, pkgs in optional.items():
+              if group == 'all':
+                  continue
+              deps.extend(pkgs)
           with open('_audit_requirements.txt', 'w') as f:
               f.write('\n'.join(deps))
           print(f'Generated {len(deps)} dependencies for audit')
