@@ -1,0 +1,39 @@
+# =============================================================================
+# CI — Stale Issues & PRs
+# =============================================================================
+# Automatically labels and closes stale issues and pull requests.
+
+name: "CI: Stale Cleanup"
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Daily at midnight UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: Mark & Close Stale
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stale check
+        uses: actions/stale@v9
+        with:
+          stale-issue-message: >
+            This issue has been inactive for 30 days. It will be closed
+            in 7 days if no further activity occurs. Add a comment to
+            keep it open.
+          stale-pr-message: >
+            This pull request has been inactive for 14 days. It will be
+            closed in 7 days if no further activity occurs.
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          days-before-issue-stale: 30
+          days-before-pr-stale: 14
+          days-before-issue-close: 7
+          days-before-pr-close: 7
+          exempt-issue-labels: "pinned,security,bug"
+          exempt-pr-labels: "pinned,security"

@@ -1,0 +1,78 @@
+# =============================================================================
+# CI — Environment & Secrets Protection
+# =============================================================================
+# Ensures no .env files, API keys, or credentials are accidentally committed.
+
+name: "CI: Environment Protection"
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  env-protection:
+    name: Secrets & Env File Guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for committed .env files
+        run: |
+          echo "=== Scanning for committed .env files ==="
+          FOUND=0
+          for pattern in ".env" "*.env.local" "*.env.production" "secrets.*"; do
+            FILES=$(find . -name "$pattern" -not -path "./.git/*" -not -name "*.env.example" -not -name "config.env" 2>/dev/null)
+            if [ -n "$FILES" ]; then
+              echo "::error::Sensitive file found: $FILES"
+              FOUND=1
+            fi
+          done
+          if [ $FOUND -eq 1 ]; then
+            echo "::error::Remove .env / secrets files before pushing!"
+            exit 1
+          fi
+          echo "✅ No sensitive env files detected"
+
+      - name: Scan for hardcoded secrets in source
+        run: |
+          echo "=== Scanning for hardcoded secrets ==="
+          PATTERNS=(
+            "sk-[a-zA-Z0-9]{20,}"
+            "ghp_[a-zA-Z0-9]{36}"
+            "AKIA[0-9A-Z]{16}"
+            "AIza[0-9A-Za-z\-_]{35}"
+            "xox[bpors]-[0-9a-zA-Z]{10,}"
+          )
+          FOUND=0
+          for pat in "${PATTERNS[@]}"; do
+            MATCHES=$(grep -rn --include="*.py" --include="*.toml" --include="*.yml" -E "$pat" . --exclude-dir=.git 2>/dev/null || true)
+            if [ -n "$MATCHES" ]; then
+              echo "::error::Possible secret pattern found: $pat"
+              echo "$MATCHES"
+              FOUND=1
+            fi
+          done
+          if [ $FOUND -eq 1 ]; then exit 1; fi
+          echo "✅ No hardcoded secrets detected"
+
+      - name: Verify .gitignore protections
+        run: |
+          echo "=== Verifying .gitignore has required entries ==="
+          MISSING=0
+          for entry in "*.env" "__pycache__/" "/venvs" ".env.*"; do
+            if ! grep -qF "$entry" .gitignore; then
+              echo "::warning::.gitignore is missing: $entry"
+              MISSING=1
+            else
+              echo "✅ .gitignore covers: $entry"
+            fi
+          done
+          if [ $MISSING -eq 1 ]; then
+            echo "::warning::Some .gitignore patterns are missing. Review recommended."
+          fi

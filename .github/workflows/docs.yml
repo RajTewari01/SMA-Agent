@@ -1,0 +1,76 @@
+# =============================================================================
+# CI — Documentation Integrity
+# =============================================================================
+# Validates that critical documentation and project files exist and are
+# not empty. Prevents merging PRs that gut essential docs.
+
+name: "CI: Documentation Integrity"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "LICENSE"
+      - "docs/**"
+      - "pyproject.toml"
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs-check:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check critical files exist
+        run: |
+          echo "=== Checking critical project files ==="
+          MISSING=0
+          for file in README.md LICENSE pyproject.toml .gitignore; do
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing required file: $file"
+              MISSING=1
+            else
+              echo "✅ $file exists"
+            fi
+          done
+          if [ $MISSING -eq 1 ]; then exit 1; fi
+
+      - name: Check files are not empty
+        run: |
+          echo "=== Checking files are not empty ==="
+          EMPTY=0
+          for file in README.md LICENSE pyproject.toml; do
+            SIZE=$(wc -c < "$file")
+            if [ "$SIZE" -lt 10 ]; then
+              echo "::error::File is empty or near-empty: $file ($SIZE bytes)"
+              EMPTY=1
+            else
+              echo "✅ $file — $SIZE bytes"
+            fi
+          done
+          if [ $EMPTY -eq 1 ]; then exit 1; fi
+
+      - name: Validate pyproject.toml syntax
+        run: |
+          pip install tomli
+          python -c "
+          import tomli, sys
+          try:
+              with open('pyproject.toml', 'rb') as f:
+                  data = tomli.load(f)
+              print('✅ pyproject.toml is valid TOML')
+              assert 'project' in data, 'Missing [project] section'
+              assert 'name' in data['project'], 'Missing project name'
+              print(f'   Project: {data[\"project\"][\"name\"]}')
+              print(f'   Version: {data[\"project\"].get(\"version\", \"N/A\")}')
+          except Exception as e:
+              print(f'::error::pyproject.toml validation failed: {e}')
+              sys.exit(1)
+          "

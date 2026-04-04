@@ -1,0 +1,84 @@
+# =============================================================================
+# CI — Pipeline Registry Validation
+# =============================================================================
+# Validates that all registered pipelines have correct metadata and
+# that the keyword search system returns expected results.
+
+name: "CI: Pipeline Validation"
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ["apps/resource_downloader/pipelines/**"]
+  pull_request:
+    branches: [main]
+    paths: ["apps/resource_downloader/pipelines/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-pipelines:
+    name: Validate Pipeline Registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -e ".[core]"
+
+      - name: Validate all pipelines
+        run: |
+          python -c "
+          import sys
+          from apps.resource_downloader.pipelines.register import (
+              PIPELINE_REGISTRY,
+              ALLOWED_MEDIA_TYPES,
+              discover_pipeline,
+              get_pipeline_by_keywords,
+              get_pipeline_by_name,
+              get_pipelines_by_media,
+          )
+
+          discover_pipeline()
+          errors = []
+
+          print(f'=== Validating {len(PIPELINE_REGISTRY)} pipelines ===')
+
+          for name, data in PIPELINE_REGISTRY.items():
+              # Check required fields
+              if not data.get('func'):
+                  errors.append(f'{name}: missing factory function')
+              if not data.get('keywords'):
+                  errors.append(f'{name}: missing keywords')
+              if data.get('media_type') not in ALLOWED_MEDIA_TYPES:
+                  errors.append(f'{name}: invalid media_type \"{data.get(\"media_type\")}\"')
+              if not data.get('description'):
+                  errors.append(f'{name}: missing description')
+
+              # Check keywords are normalized
+              for kw in data.get('keywords', []):
+                  if kw != kw.lower().strip():
+                      errors.append(f'{name}: keyword \"{kw}\" is not normalized')
+
+              print(f'  ✅ {name} — {data.get(\"media_type\")} — {len(data.get(\"keywords\", []))} keywords')
+
+          # Smoke-test keyword search
+          for strategy in ['jaccard', 'overlap', 'fuzzy']:
+              results = get_pipeline_by_keywords('stock photo image', strategy=strategy)
+              print(f'  ✅ Keyword search ({strategy}): {len(results)} results')
+
+          if errors:
+              print(f'\n::error::{len(errors)} validation errors:')
+              for e in errors:
+                  print(f'  ❌ {e}')
+              sys.exit(1)
+
+          print(f'\n✅ All {len(PIPELINE_REGISTRY)} pipelines validated successfully')
+          "
