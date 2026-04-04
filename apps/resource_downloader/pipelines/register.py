@@ -21,8 +21,10 @@ when adding new styles or capabilities.
 """
 
 from typing import Callable,Dict,List,Literal,Any
-from types import MappingProxyType
+from types import MappingProxyType,Mapping
+from difflib import SequenceMatcher
 from pathlib import Path
+import re
 """
  ==================GLOBAL REGISTRY SYSTEM STORAGE=====================
 Features :
@@ -106,7 +108,7 @@ def get_pipeline_by_name(name : str ) -> Dict[str,Any] | None:
     """
     return PIPELINE_REGISTRY.get(name)
 
-def get_all_pipelines() -> MappingProxyType[str,Dict[str,Any]] :
+def get_all_pipelines() -> Mapping[str,Dict[str,Any]] :
     """Get all registered pipelines."""
     return MappingProxyType(PIPELINE_REGISTRY)
 
@@ -124,41 +126,6 @@ def get_pipelines_names() -> List[str] :
     """
     return list(PIPELINE_REGISTRY.keys())
 
-def get_pipeline_by_keywords(params: str | List[str]) -> Dict[str, float]:
-    """
-    Returns pipeline names with confidence scores based on keyword overlap.
-
-    The score is the fraction of the pipeline's keywords that appear in the
-    query, i.e.  ``|intersection| / |pipeline_keywords|``.
-
-    Args:
-        params: A search string (split on whitespace) or an explicit keyword list.
-
-    Returns:
-        A dict of ``{pipeline_name: confidence}`` sorted descending by score.
-    """
-    query_keywords = (
-        params.lower().split() if isinstance(params, str)
-        else [p.lower().strip() for p in params]
-    )
-
-    results: Dict[str, float] = {}
-
-    for name, data in PIPELINE_REGISTRY.items():
-        pipeline_keywords = data.get("keywords", [])
-        if not pipeline_keywords:
-            continue
-
-        matches = sum(1 for kw in pipeline_keywords if kw in query_keywords)
-        if matches == 0:
-            continue
-
-        score = matches / len(pipeline_keywords)
-        results[name] = round(score, 4)
-
-    return dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
-
-
 def _jaccard_similarity(set_a: set, set_b: set) -> float:
     """Compute the Jaccard similarity between two sets: |A ∩ B| / |A ∪ B|."""
     if not set_a and not set_b:
@@ -168,36 +135,88 @@ def _jaccard_similarity(set_a: set, set_b: set) -> float:
     return len(intersection) / len(union)
 
 
-def get_pipeline_by_keywords_using_jaccard(params: str | List[str]) -> Dict[str, float]:
+def _tokenize(text: str) -> List[str]:
     """
-    Returns pipeline names with confidence scores using Jaccard similarity.
+    Extract unique, lowercased word tokens from a string.
 
-    Jaccard = |query ∩ pipeline_kw| / |query ∪ pipeline_kw|.
-    This penalises queries that are much broader or narrower than the
-    pipeline's keyword set, giving a more balanced ranking than simple overlap.
+    Strips punctuation / special characters and returns only
+    alphanumeric tokens (no duplicates).
+    """
+    return list(set(re.findall(r'[a-zA-Z0-9]+', text.lower().strip())))
+
+
+def _fuzzy_match(a: str, b: str, threshold: float = 0.8) -> bool:
+    """Return True if SequenceMatcher ratio between *a* and *b* >= *threshold*."""
+    return SequenceMatcher(None, a, b).ratio() >= threshold
+
+
+def get_pipeline_by_keywords(
+    params: str | List[str],
+    strategy: Literal['overlap', 'jaccard', 'fuzzy'] = 'jaccard',
+    fuzzy_threshold: float = 0.8
+) -> Dict[str, float]:
+    """
+    Returns pipeline names ranked by keyword similarity.
+
+    Strategies:
+        overlap  — |matches| / |pipeline_keywords|.
+                   Good when you want to know how much of a pipeline's
+                   identity the query covers.
+        jaccard  — |query ∩ kw| / |query ∪ kw|  (default).
+                   Penalises overly broad or narrow queries, giving a
+                   more balanced ranking.
+        fuzzy    — Uses SequenceMatcher to find approximate matches.
+                   Catches typos like "pixle" → "pexels" or
+                   "unsplsh" → "unsplash".
 
     Args:
-        params: A search string (split on whitespace) or an explicit keyword list.
+        params:          A search string (split on whitespace) or a keyword list.
+        strategy:        Scoring algorithm — ``'overlap'``, ``'jaccard'``, or ``'fuzzy'``.
+        fuzzy_threshold: Minimum SequenceMatcher ratio to count as a match
+                         (only used when ``strategy='fuzzy'``). Default 0.8.
 
     Returns:
         A dict of ``{pipeline_name: confidence}`` sorted descending by score.
     """
-    query_keywords = (
-        set(params.lower().split()) if isinstance(params, str)
-        else set(p.lower().strip() for p in params)
-    )
+    # --- Tokenize the query ---
+    if isinstance(params, str):
+        query_tokens = _tokenize(params)
+    else:
+        query_tokens = [p.lower().strip() for p in params]
 
     results: Dict[str, float] = {}
 
     for name, data in PIPELINE_REGISTRY.items():
-        pipeline_keywords = set(data.get("keywords", []))
+        pipeline_keywords = data.get("keywords", [])
         if not pipeline_keywords:
             continue
-        score = _jaccard_similarity(query_keywords, pipeline_keywords)
+
+        if strategy == 'jaccard':
+            score = _jaccard_similarity(set(query_tokens), set(pipeline_keywords))
+
+        elif strategy == 'fuzzy':
+            matches = 0
+            for kw in pipeline_keywords:
+                for qt in query_tokens:
+                    if _fuzzy_match(qt, kw, threshold=fuzzy_threshold):
+                        matches += 1
+                        break
+            if matches == 0:
+                continue
+            score = matches / len(pipeline_keywords)
+
+        else:  # overlap
+            matches = sum(1 for kw in pipeline_keywords if kw in query_tokens)
+            if matches == 0:
+                continue
+            score = matches / len(pipeline_keywords)
+
         if score > 0:
-            results[name] = round(score, 3)
+            results[name] = round(score, 4)
 
     return dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
+
+
 
 def discover_pipeline():
     """
