@@ -21,7 +21,8 @@ when adding new styles or capabilities.
 """
 
 from typing import Callable,Dict,List,Literal,Any
-from types import MappingProxyType,Mapping
+from types import MappingProxyType
+from collections.abc import Mapping
 from difflib import SequenceMatcher
 from pathlib import Path
 import re
