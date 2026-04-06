@@ -77,7 +77,7 @@ class ConfigPipeline:
                 >>> 4. Convert to Lowercase.
             """
             from sys import path
-            path.append(__ROOT__)
+            path.insert(0,str(__ROOT__))
             from apps.resource_downloader.pipelines.base import BaseGatherer
             return BaseGatherer.sanitize_search_term(term = term)
         
