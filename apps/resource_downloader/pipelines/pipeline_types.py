@@ -78,7 +78,7 @@ class ConfigPipeline:
             """
             from sys import path
             path.append(__ROOT__)
-            from apps.resource_downloader.engine import BaseGatherer
+            from apps.resource_downloader.pipelines.base import BaseGatherer
             return BaseGatherer.sanitize_search_term(term = term)
         
     def _load_random_searchterm(self) -> str:
