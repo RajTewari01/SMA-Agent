@@ -1,0 +1,25 @@
+root ::= "{" ws name_field "," ws title_field "," ws body_field "," ws conclusion_field ws "}"
+
+name_field ::= "\"name\"" ws ":" ws string
+
+title_field ::= "\"title\"" ws ":" ws title_string
+body_field ::= "\"body\"" ws ":" ws body_string
+conclusion_field ::= "\"conclusion\"" ws ":" ws conclusion_string
+
+# Strict tagged formats
+title_string ::= "\"[title]" content "[/title]\""
+body_string ::= "\"[body]" content "[/body]\""
+conclusion_string ::= "\"[conclusion]" content "[/conclusion]\""
+
+# Generic string (for name)
+string ::= "\"" chars "\""
+
+# Content inside tags
+content ::= char*
+chars ::= char*
+
+# Allow safe characters only (no backslash)
+char ::= [^\\]
+
+# whitespace
+ws ::= [ \t\n\r]*
