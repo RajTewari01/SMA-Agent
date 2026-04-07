@@ -2,6 +2,9 @@
 # CONSTANTS
 # =========================================================
 
+import re
+import unicodedata
+
 _USER_AGENT = [# Chrome on Windows
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -51,11 +54,9 @@ _USER_AGENT = [# Chrome on Windows
     "Mozilla/5.0 (Linux; Android 14; SM-G998B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/24.0 Chrome/122.0.0.0 Mobile Safari/537.36",
 ]
 
-import re
-import unicodedata
 
 class BaseGatherer:
-    
+
     @staticmethod
     def sanitize_search_term(term: str) -> str:
         if not term:
@@ -70,5 +71,3 @@ class BaseGatherer:
         term = re.sub(r'[^a-zA-Z0-9\s]', '', term)
         # 5. Collapse spaces
         return re.sub(r'\s+', ' ', term).strip().lower()
-
-    

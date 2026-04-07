@@ -8,10 +8,10 @@ Factory function for downloading GIFs and short video clips from Giphy.
 """
 
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Literal, Optional
 
-from .register import register_pipeline
 from .pipeline_types import ConfigPipeline
+from .register import register_pipeline
 
 
 @register_pipeline(

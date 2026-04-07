@@ -1,11 +1,11 @@
 """
 pipelines_types.py -> creates a formal format for all pipelines types to follow.
 """
-from typing import Literal,Optional,List
-from dataclasses import dataclass,field
-from pathlib import Path
-import random
 import json
+import random
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import List, Literal, Optional
 
 __ROOT__ = Path(__file__).resolve().absolute().parents[3]
 
@@ -13,7 +13,7 @@ __ROOT__ = Path(__file__).resolve().absolute().parents[3]
 class ConfigPipeline:
     """
     Configuration dataclass for the downloading pipeline.
-    
+
     This class handles the setup of search parameters, directory management,
     and dynamic defaults for item counts based on media type.
     """
@@ -36,7 +36,7 @@ class ConfigPipeline:
         2. Loads a random search term if none is provided.
         3. Sets default item_count based on download_type (Video vs Image).
         """
-        
+
         # --- Handle Output Directory ---
         if self.output_dir:
             # Ensures its a path object and not a string.
@@ -58,7 +58,7 @@ class ConfigPipeline:
 
         if self.search_term:
             self.search_term = self._sanitize_searchterm(self.search_term)
-        
+
         if not self.search_term:
             self.search_term = self._load_random_searchterm()
 
@@ -75,12 +75,14 @@ class ConfigPipeline:
                 >>> 2. Remove Special Characters.
                 >>> 3. Remove Extra Spaces.
                 >>> 4. Convert to Lowercase.
+
+            TODO
             """
             from sys import path
             path.insert(0,str(__ROOT__))
             from apps.resource_downloader.pipelines.base import BaseGatherer
             return BaseGatherer.sanitize_search_term(term = term)
-        
+
     def _load_random_searchterm(self) -> str:
             """
             Loads a random search term from the search_terms.json file.
@@ -88,11 +90,12 @@ class ConfigPipeline:
             try:
                 from sys import path
                 path.insert(0,str(__ROOT__))
-                from core.paths import SEARCH_QUERIES 
                 import json
+
+                from core.paths import SEARCH_QUERIES
                 with open(SEARCH_QUERIES, "r") as infile:
                     data = json.load(infile)
-                    needed_data = random.choice(data.get(self.media_type,[])) 
+                    needed_data = random.choice(data.get(self.media_type,[]))
                     return needed_data
 
             except ImportError :
@@ -100,6 +103,5 @@ class ConfigPipeline:
             except FileNotFoundError :
                 raise FileNotFoundError("Please ensure the search_terms.json file exists.")
             except Exception as e:
-                raise Exception(f"An error occurred while loading the search terms") from e 
+                raise Exception("An error occurred while loading the search terms") from e
 
-        

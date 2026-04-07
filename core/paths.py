@@ -4,9 +4,10 @@ paths.py -> Helps to build paths based on production and development environment
 NOTE : Still contains all the paths for the local devs
 """
 
-from pathlib import Path
 from dataclasses import dataclass
-from enum import Enum,auto
+from enum import Enum, auto
+from pathlib import Path
+
 from config import config
 
 __ROOT__ = Path(__file__).resolve().absolute().parents[1]
@@ -32,5 +33,4 @@ downloaded_assets = {
 }
 
 SEARCH_QUERIES = Path(__ROOT__ / "config/json/search_terms.json")
-    
-    
+

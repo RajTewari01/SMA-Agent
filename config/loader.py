@@ -1,8 +1,9 @@
 from pathlib import Path
+
 from dotenv import dotenv_values
+
 from .dev import DevConfig
 from .prod import ProdConfig
-
 
 ROOT = Path(__file__).resolve().parents[2]
 env_data = dotenv_values(ROOT / ".env")

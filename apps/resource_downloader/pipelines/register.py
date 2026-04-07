@@ -3,9 +3,9 @@ PIPELINE REGISTRY SYSTEM
 ==========================
 
 NOTE : A central registry for managing media generation pipelines.
-This system allows developers to register new pipeline configurations 
-using a simple decorator, eliminating the need to modify core logic 
-when adding new styles or capabilities. 
+This system allows developers to register new pipeline configurations
+using a simple decorator, eliminating the need to modify core logic
+when adding new styles or capabilities.
 
 >>> USAGE :
             @register_pipeline(
@@ -20,19 +20,20 @@ when adding new styles or capabilities.
                 pass
 """
 
-from typing import Callable,Dict,List,Literal,Any
-from types import MappingProxyType
+import re
 from collections.abc import Mapping
 from difflib import SequenceMatcher
 from pathlib import Path
-import re
+from types import MappingProxyType
+from typing import Any, Callable, Dict, List, Literal
+
 """
  ==================GLOBAL REGISTRY SYSTEM STORAGE=====================
 Features :
             >>> Stores metadata for a particular pipeline.
             >>> stores factory function for all registered pipeline.
 Structures :
-            >>> 
+            >>>
             { pipeline_name :
                 {
                     "name" : str
@@ -100,10 +101,10 @@ def validate_mediatype(mediatype: str) :
 def get_pipeline_by_name(name : str ) -> Dict[str,Any] | None:
     """
     Directly retrieve a pipeline by its unique name.
-    
+
     Args:
         name: The unique string ID of the pipeline.
-        
+
     Returns:
         The pipeline metadata dict, or None if not found.
     """
@@ -235,14 +236,14 @@ def discover_pipeline():
         >>> yt_dlp_video    — yt-dlp video downloads        (video)
         >>> yt_dlp_music    — yt-dlp audio/music extraction (music)
     """
-    from . import (        # type: ignore
-        pixels,            # pexels_image
-        pixels_video,      # pexels_video
-        pixabay,           # pixabay_image
-        pixabay_video,     # pixabay_video
-        giphy,             # giphy
-        unsplash,          # unsplash
-        duckduckgo,        # duckduckgo
-        yt_dlp_video,      # yt_dlp_video
-        yt_dlp_music,      # yt_dlp_music
+    from . import (  # type: ignore
+        duckduckgo,  # duckduckgo
+        giphy,  # giphy
+        pixabay,  # pixabay_image
+        pixabay_video,  # pixabay_video
+        pixels,  # pexels_image
+        pixels_video,  # pexels_video
+        unsplash,  # unsplash
+        yt_dlp_music,  # yt_dlp_music
+        yt_dlp_video,  # yt_dlp_video
     )
