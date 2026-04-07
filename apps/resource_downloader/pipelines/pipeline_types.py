@@ -92,7 +92,7 @@ class ConfigPipeline:
                 import json
                 with open(SEARCH_QUERIES, "r") as infile:
                     data = json.load(infile)
-                    needed_data = random.choice(data.get('search_term',[])) 
+                    needed_data = random.choice(data.get(self.media_type,[])) 
                     return needed_data
 
             except ImportError :
