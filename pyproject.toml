@@ -80,7 +80,7 @@ media = [
 ]
 
 networking = [
-    "requests",
+    "requests>=2.33.0",
     "httpx",
     "websocket-client",
     "aiohttp"
