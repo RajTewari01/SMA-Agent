@@ -232,6 +232,8 @@ def discover_pipeline():
         >>> giphy           — Giphy animated GIFs           (gifs)
         >>> unsplash        — Unsplash creative photos      (image)
         >>> duckduckgo      — DuckDuckGo web image search   (image)
+        >>> yt_dlp_video    — yt-dlp video downloads        (video)
+        >>> yt_dlp_music    — yt-dlp audio/music extraction (music)
     """
     from . import (        # type: ignore
         pixels,            # pexels_image
@@ -241,4 +243,6 @@ def discover_pipeline():
         giphy,             # giphy
         unsplash,          # unsplash
         duckduckgo,        # duckduckgo
+        yt_dlp_video,      # yt_dlp_video
+        yt_dlp_music,      # yt_dlp_music
     )

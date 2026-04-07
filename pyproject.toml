@@ -72,7 +72,6 @@ socials = [
 ]
 
 media = [
-    "yt-dlp",
     "moviepy",
     "imageio",
     "imageio-ffmpeg",
@@ -83,7 +82,8 @@ networking = [
     "requests>=2.33.0",
     "httpx",
     "websocket-client",
-    "aiohttp"
+    "aiohttp",
+    "yt-dlp",
 ]
 
 core = [
@@ -93,13 +93,18 @@ core = [
     "tqdm"
 ]
 
+server = [
+    "fastapi",
+    "uvicorn"]
+
 all = [
     "sma-agent[ai]",
     "sma-agent[automation]",
     "sma-agent[socials]",
     "sma-agent[media]",
     "sma-agent[networking]",
-    "sma-agent[core]"
+    "sma-agent[core]",
+    "sma-agent[server]"
 ]
 
 [project.scripts]
