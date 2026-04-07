@@ -19,3 +19,32 @@ NOTES:
     - GBNF is used to enforce strict output structure (especially useful for JSON consistency).
     - Designed for balance between performance and quality on limited hardware.
 """
+import re
+import sys 
+import json
+from typing import (
+    TypedDict,
+    Dict,
+    Optional,
+    Tuple,
+    Literal)
+from pathlib import Path
+from pydantic import BaseModel,Field
+
+__ROOT__ = Path(__file__).resolve().parents[2].absolute()
+sys.path.insert(0,str(__ROOT__))
+from config import config
+from core.paths import llm_venv_path
+from core.llm import BaseInference
+
+class StoryInfernece(BaseInference):
+    __slots__ = ['_model_path','_model_name','_model_type','_model_params','_llm_venv_path','_llm_env_vars']
+    def __init__(self):
+        super().__init__()
+
+
+
+
+
+
+
