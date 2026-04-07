@@ -20,16 +20,16 @@ from .register import register_pipeline
     description="Giphy — the largest library of animated GIFs and stickers.",
     media_type="gifs",
     api_calls_per_hour=42,
-    d_exec=True
+    d_exec=True,
 )
 def get_giphy_config(
     search_term: str,
     item_count: int = 10,
-    download_method: Literal['fast', 'safe'] = 'fast',
+    download_method: Literal["fast", "safe"] = "fast",
     output_dir: Optional[Path | str] = None,
     request_limit: int = 42,
-    safe_search: Literal['off', 'modest'] = 'off',
-    debug: bool = False
+    safe_search: Literal["off", "modest"] = "off",
+    debug: bool = False,
 ) -> ConfigPipeline:
     """
     Factory to create a ConfigPipeline for Giphy GIF downloads.
@@ -37,11 +37,11 @@ def get_giphy_config(
     return ConfigPipeline(
         safe_search=safe_search,
         search_term=search_term,
-        media_type='gifs',
+        media_type="gifs",
         debug=debug,
         item_count=item_count,
         download_method=download_method,
         output_dir=output_dir,
         request_limit=request_limit,
-        api_name="Giphy"
+        api_name="Giphy",
     )

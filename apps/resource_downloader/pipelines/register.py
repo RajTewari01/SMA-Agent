@@ -59,46 +59,52 @@ Structures :
 
 """
 
-PIPELINE_REGISTRY : Dict[str,Dict[str,Any]] = {}
-ALLOWED_MEDIA_TYPES = {'image', 'video', 'music', 'gifs', 'song'}
+PIPELINE_REGISTRY: Dict[str, Dict[str, Any]] = {}
+ALLOWED_MEDIA_TYPES = {"image", "video", "music", "gifs", "song"}
 __ROOT__ = Path(__file__).resolve().absolute().parents[3]
 
+
 def register_pipeline(
-    name : str ,
-    keywords : List[str] | None = None,
-    description : None | str = None,
-    media_type : Literal[
-        'image', 'video', 'music', 'gifs', 'song'] = 'image',
-    api_calls_per_hour : None | int = None,
-    d_exec : bool = False
+    name: str,
+    keywords: List[str] | None = None,
+    description: None | str = None,
+    media_type: Literal["image", "video", "music", "gifs", "song"] = "image",
+    api_calls_per_hour: None | int = None,
+    d_exec: bool = False,
 ) -> Callable:
     """
     Decorator to register a pipeline function.
     """
     import sys
-    sys.path.insert(0,str(__ROOT__))
+
+    sys.path.insert(0, str(__ROOT__))
     from config import config
-    if config.IMMEDIATE_ERROR_VALIDATION :
+
+    if config.IMMEDIATE_ERROR_VALIDATION:
         validate_mediatype(mediatype=media_type)
 
-    def decorator(func : Callable) -> Callable:
+    def decorator(func: Callable) -> Callable:
         PIPELINE_REGISTRY[name] = {
-            "func" : func,
-            "keywords" : [kw.lower().strip() for kw in keywords] if keywords else [],
-            "description" : description,
-            "media_type" : media_type,
-            "api_calls_per_hour" : api_calls_per_hour,
-            "d_exec" : d_exec
+            "func": func,
+            "keywords": [kw.lower().strip() for kw in keywords] if keywords else [],
+            "description": description,
+            "media_type": media_type,
+            "api_calls_per_hour": api_calls_per_hour,
+            "d_exec": d_exec,
         }
-        if not config.IMMEDIATE_ERROR_VALIDATION : validate_mediatype(mediatype=media_type)
+        if not config.IMMEDIATE_ERROR_VALIDATION:
+            validate_mediatype(mediatype=media_type)
         return func
+
     return decorator
 
-def validate_mediatype(mediatype: str) :
+
+def validate_mediatype(mediatype: str):
     if mediatype not in ALLOWED_MEDIA_TYPES:
         raise ValueError(f"Invalid media_type: {mediatype}")
 
-def get_pipeline_by_name(name : str ) -> Dict[str,Any] | None:
+
+def get_pipeline_by_name(name: str) -> Dict[str, Any] | None:
     """
     Directly retrieve a pipeline by its unique name.
 
@@ -110,23 +116,25 @@ def get_pipeline_by_name(name : str ) -> Dict[str,Any] | None:
     """
     return PIPELINE_REGISTRY.get(name)
 
-def get_all_pipelines() -> Mapping[str,Dict[str,Any]] :
+
+def get_all_pipelines() -> Mapping[str, Dict[str, Any]]:
     """Get all registered pipelines."""
     return MappingProxyType(PIPELINE_REGISTRY)
 
-def get_pipelines_by_media(
-    media_type : Literal['image','video','music','gifs','song']
-    ) -> List[str]:
+
+def get_pipelines_by_media(media_type: Literal["image", "video", "music", "gifs", "song"]) -> List[str]:
     """
     Returns a list of pipeline names that match the given media type.
     """
-    return [name for name, data in PIPELINE_REGISTRY.items() if data.get('media_type') == media_type]
+    return [name for name, data in PIPELINE_REGISTRY.items() if data.get("media_type") == media_type]
 
-def get_pipelines_names() -> List[str] :
+
+def get_pipelines_names() -> List[str]:
     """
     Returns a list of registered pipelines to the user.
     """
     return list(PIPELINE_REGISTRY.keys())
+
 
 def _jaccard_similarity(set_a: set, set_b: set) -> float:
     """Compute the Jaccard similarity between two sets: |A ∩ B| / |A ∪ B|."""
@@ -144,7 +152,7 @@ def _tokenize(text: str) -> List[str]:
     Strips punctuation / special characters and returns only
     alphanumeric tokens (no duplicates).
     """
-    return list(set(re.findall(r'[a-zA-Z0-9]+', text.lower().strip())))
+    return list(set(re.findall(r"[a-zA-Z0-9]+", text.lower().strip())))
 
 
 def _fuzzy_match(a: str, b: str, threshold: float = 0.8) -> bool:
@@ -153,9 +161,7 @@ def _fuzzy_match(a: str, b: str, threshold: float = 0.8) -> bool:
 
 
 def get_pipeline_by_keywords(
-    params: str | List[str],
-    strategy: Literal['overlap', 'jaccard', 'fuzzy'] = 'jaccard',
-    fuzzy_threshold: float = 0.8
+    params: str | List[str], strategy: Literal["overlap", "jaccard", "fuzzy"] = "jaccard", fuzzy_threshold: float = 0.8
 ) -> Dict[str, float]:
     """
     Returns pipeline names ranked by keyword similarity.
@@ -193,10 +199,10 @@ def get_pipeline_by_keywords(
         if not pipeline_keywords:
             continue
 
-        if strategy == 'jaccard':
+        if strategy == "jaccard":
             score = _jaccard_similarity(set(query_tokens), set(pipeline_keywords))
 
-        elif strategy == 'fuzzy':
+        elif strategy == "fuzzy":
             matches = 0
             for kw in pipeline_keywords:
                 for qt in query_tokens:
@@ -217,7 +223,6 @@ def get_pipeline_by_keywords(
             results[name] = round(score, 4)
 
     return dict(sorted(results.items(), key=lambda x: x[1], reverse=True))
-
 
 
 def discover_pipeline():

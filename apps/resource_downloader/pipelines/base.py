@@ -5,7 +5,7 @@
 import re
 import unicodedata
 
-_USER_AGENT = [# Chrome on Windows
+_USER_AGENT = [  # Chrome on Windows
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6042.218 Safari/537.36",
@@ -56,18 +56,17 @@ _USER_AGENT = [# Chrome on Windows
 
 
 class BaseGatherer:
-
     @staticmethod
     def sanitize_search_term(term: str) -> str:
         if not term:
             return ""
         # 1. Normalize Unicode
-        term = unicodedata.normalize('NFKD', term)
+        term = unicodedata.normalize("NFKD", term)
         # 2. ASCII Encode (Strip Emojis)
-        term = term.encode('ascii', 'ignore').decode('utf-8')
+        term = term.encode("ascii", "ignore").decode("utf-8")
         # 3. Replace separators with spaces
-        term = re.sub(r'[-_.]', ' ', term)
+        term = re.sub(r"[-_.]", " ", term)
         # 4. Remove non-alphanumeric
-        term = re.sub(r'[^a-zA-Z0-9\s]', '', term)
+        term = re.sub(r"[^a-zA-Z0-9\s]", "", term)
         # 5. Collapse spaces
-        return re.sub(r'\s+', ' ', term).strip().lower()
+        return re.sub(r"\s+", " ", term).strip().lower()
