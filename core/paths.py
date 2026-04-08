@@ -2,16 +2,14 @@
 paths.py -> Helps to build paths based on production and development environment configs.
 """
 
-from pathlib import Path
-from typing import (
-    Dict,
-    Literal,
-    Tuple)
-import platform 
-import warnings
+import platform
 
 # ================== PROJECT ROOT =====================
 import sys
+import warnings
+from pathlib import Path
+from typing import Dict, Literal, Tuple
+
 __ROOT__ = Path(__file__).absolute().resolve().parents[1]
 sys.path.insert(0,str(__ROOT__))
 from config import config
@@ -51,9 +49,9 @@ def ensure_files(abs_path : str | Path) :
     if not abs_path.exists(): abs_path.touch(exist_ok=True)
 
 def get_python_venv(name : str, str_path : bool = False, debug :bool = DEBUG ) -> str | Path | None :
-    
+
     venv_path = ENV_DIR / name
-    if not venv_path.exists(): 
+    if not venv_path.exists():
         warnings.warn(f"Venv not found for {name}")
         return None
     system = platform.system()
@@ -62,13 +60,13 @@ def get_python_venv(name : str, str_path : bool = False, debug :bool = DEBUG ) -
         'Darwin'  : venv_path/'bin/python',
         'Linux'   : venv_path/'bin/python'
     }
-    if system not in executables : 
+    if system not in executables :
         msg = f"Unsupported OS : {system}"
         if debug :
             raise OSError (msg)
         warnings.warn(msg)
         return None
-    
+
     resolved = executables[system]
     return str(resolved) if str_path else resolved
 
@@ -83,7 +81,7 @@ def get_venv_mapping() ->Dict[str,Path | None ]:
 def check_all_assets_dir():
     for i in ASSETS_MAP.values():
         ensure_dir(abs_path=i)
-    
+
 
 LIST_OF_DIR = [ASSETS_DIR,CONFIG_DIR,DB_DIR,ENV_DIR]
 LIST_OF_FILES = [STORY_GRAMMARS_SCHEMA,SEARCH_QUERIES]
