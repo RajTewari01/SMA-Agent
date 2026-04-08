@@ -34,3 +34,16 @@ downloaded_assets = {
 }
 
 SEARCH_QUERIES = Path(__ROOT__ / "config/json/search_terms.json")
+
+
+def check_venv_path(name: str, path: str | Path) -> Path | str | None:
+    import platform
+
+    if not Path(name).exists():
+        return None
+
+    systems = {"Windows": "Scripts/python.exe", "Linux": "bin/python", "Darwin": "bin/python"}
+    system_name = platform.system()
+    if system_name not in systems:
+        return None
+    return Path(path) / systems.get(system_name)
