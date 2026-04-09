@@ -7,7 +7,7 @@ import platform
 import sys
 import warnings
 from pathlib import Path
-from typing import Dict, Literal, Tuple
+from typing import Dict, Literal, Tuple, cast
 
 __ROOT__ = Path(__file__).absolute().resolve().parents[1]
 sys.path.insert(0, str(__ROOT__))
@@ -75,7 +75,7 @@ def get_python_venv(name: str, str_path: bool = False, debug: bool = DEBUG) -> s
         return None
 
     resolved = executables[system]
-    return str(resolved) if str_path else resolved
+    return cast(Path | str | None,str(resolved) if str_path else resolved)
 
 
 def get_venv_mapping() -> Dict[str, str | Path | None]:
