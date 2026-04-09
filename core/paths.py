@@ -2,9 +2,9 @@
 paths.py -> Helps to build paths based on production and development environment configs.
 """
 
-import platform
 
 # ================== PROJECT ROOT =====================
+import platform
 import sys
 import warnings
 from pathlib import Path
@@ -23,6 +23,7 @@ ASSETS_DIR = __ROOT__/ "assets"
 CONFIG_DIR =  __ROOT__/ "config"
 DB_DIR = __ROOT__ / "db"
 ENV_DIR = __ROOT__ / "env"
+VENV_DIR = __ROOT__ / "venvs"
 
 # ===============FILE PATHS =======================
 
@@ -83,7 +84,7 @@ def check_all_assets_dir():
         ensure_dir(abs_path=i)
 
 
-LIST_OF_DIR = [ASSETS_DIR,CONFIG_DIR,DB_DIR,ENV_DIR]
+LIST_OF_DIR = [ASSETS_DIR,CONFIG_DIR,DB_DIR,ENV_DIR,VENV_DIR]
 LIST_OF_FILES = [STORY_GRAMMARS_SCHEMA,SEARCH_QUERIES]
 
 def check_all_dir():
@@ -98,4 +99,5 @@ def check_all_files():
 check_all_dir()
 check_all_files()
 check_all_assets_dir()
+
 

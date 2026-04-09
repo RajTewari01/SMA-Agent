@@ -8,7 +8,7 @@ from pydantic import BaseModel, model_validator
 
 __ROOT__ = Path(__file__).resolve().absolute().parents[1]
 path.insert(0, str(__ROOT__))
-from core.paths import check_venv_environment
+from core.paths import get_venv_mapping
 
 
 class ModelType(str, Enum):
@@ -41,7 +41,7 @@ class BaseInference(ABC):
     def __init__(self, config: BaseConfig):
         self.config = config
         self.model = None
-        self.llm_venv_path = ''
+        self.llm_venv_path = get_venv_mapping().get("ai")
 
     # ============ LLM LIFECYCLE ============
 
