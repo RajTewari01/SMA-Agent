@@ -59,6 +59,7 @@ BG_BRIGHT_WHITE = "\033[107m"
 
 # --- Dynamic Color Generators ---
 
+
 def fore256(n: int) -> str:
     """Returns the ANSI escape sequence for a 256-color foreground."""
     return f"\033[38;5;{max(0, min(255, n))}m"
@@ -81,36 +82,54 @@ def back_rgb(r: int, g: int, b: int) -> str:
 
 # --- Namespaces for organization ---
 
+
 class Fore:
     """Namespace for Foreground Colors"""
+
     BLACK, RED, GREEN, YELLOW = BLACK, RED, GREEN, YELLOW
     BLUE, MAGENTA, CYAN, WHITE = BLUE, MAGENTA, CYAN, WHITE
     BRIGHT_BLACK, BRIGHT_RED, BRIGHT_GREEN, BRIGHT_YELLOW = BRIGHT_BLACK, BRIGHT_RED, BRIGHT_GREEN, BRIGHT_YELLOW
     BRIGHT_BLUE, BRIGHT_MAGENTA, BRIGHT_CYAN, BRIGHT_WHITE = BRIGHT_BLUE, BRIGHT_MAGENTA, BRIGHT_CYAN, BRIGHT_WHITE
-    
+
     @staticmethod
-    def c256(n: int) -> str: return fore256(n)
-    
+    def c256(n: int) -> str:
+        return fore256(n)
+
     @staticmethod
-    def rgb(r: int, g: int, b: int) -> str: return rgb(r, g, b)
+    def rgb(r: int, g: int, b: int) -> str:
+        return rgb(r, g, b)
 
 
 class Back:
     """Namespace for Background Colors"""
+
     BLACK, RED, GREEN, YELLOW = BG_BLACK, BG_RED, BG_GREEN, BG_YELLOW
     BLUE, MAGENTA, CYAN, WHITE = BG_BLUE, BG_MAGENTA, BG_CYAN, BG_WHITE
-    BRIGHT_BLACK, BRIGHT_RED, BRIGHT_GREEN, BRIGHT_YELLOW = BG_BRIGHT_BLACK, BG_BRIGHT_RED, BG_BRIGHT_GREEN, BG_BRIGHT_YELLOW
-    BRIGHT_BLUE, BRIGHT_MAGENTA, BRIGHT_CYAN, BRIGHT_WHITE = BG_BRIGHT_BLUE, BG_BRIGHT_MAGENTA, BG_BRIGHT_CYAN, BG_BRIGHT_WHITE
-    
+    BRIGHT_BLACK, BRIGHT_RED, BRIGHT_GREEN, BRIGHT_YELLOW = (
+        BG_BRIGHT_BLACK,
+        BG_BRIGHT_RED,
+        BG_BRIGHT_GREEN,
+        BG_BRIGHT_YELLOW,
+    )
+    BRIGHT_BLUE, BRIGHT_MAGENTA, BRIGHT_CYAN, BRIGHT_WHITE = (
+        BG_BRIGHT_BLUE,
+        BG_BRIGHT_MAGENTA,
+        BG_BRIGHT_CYAN,
+        BG_BRIGHT_WHITE,
+    )
+
     @staticmethod
-    def c256(n: int) -> str: return back256(n)
-    
+    def c256(n: int) -> str:
+        return back256(n)
+
     @staticmethod
-    def rgb(r: int, g: int, b: int) -> str: return back_rgb(r, g, b)
+    def rgb(r: int, g: int, b: int) -> str:
+        return back_rgb(r, g, b)
 
 
 class Style:
     """Namespace for Text Styles"""
+
     RESET, BOLD, DIM, ITALIC = RESET, BOLD, DIM, ITALIC
     UNDERLINE, BLINK, RAPID_BLINK = UNDERLINE, BLINK, RAPID_BLINK
     REVERSE, HIDDEN, STRIKE, OVERLINE = REVERSE, HIDDEN, STRIKE, OVERLINE
@@ -118,6 +137,7 @@ class Style:
 
 class Palette:
     """Extended Palette using 256-color codes for high compatibility."""
+
     ORANGE = fore256(208)
     PINK = fore256(201)
     PURPLE = fore256(165)
@@ -140,6 +160,7 @@ class Palette:
 
 # --- Utility Functions ---
 
+
 def apply_style(text: str, *styles: str) -> str:
     """Apply any number of styles to text and append a reset."""
     return f"{''.join(styles)}{text}{RESET}"
@@ -153,14 +174,12 @@ INFO = f"{BOLD}{CYAN}"
 DEBUG = f"{DIM}{MAGENTA}"
 
 # Legacy support
-_ANSII_ESCAPE_SEQUENCE = {
-    'cyan': CYAN,
-    'red': RED,
-    'reset': RESET
-}
+_ANSII_ESCAPE_SEQUENCE = {"cyan": CYAN, "red": RED, "reset": RESET}
 
 if __name__ == "__main__":
     print(apply_style("Social Automation Agent - Extended Styling", BOLD, Palette.GOLD))
-    print(f"{INFO}INFO{RESET} | {SUCCESS}SUCCESS{RESET} | {WARNING}WARNING{RESET} | {ERROR}ERROR{RESET} | {DEBUG}DEBUG{RESET}")
+    print(
+        f"{INFO}INFO{RESET} | {SUCCESS}SUCCESS{RESET} | {WARNING}WARNING{RESET} | {ERROR}ERROR{RESET} | {DEBUG}DEBUG{RESET}"
+    )
     print(apply_style("Custom 256 Color (Orange)", Palette.ORANGE))
     print(apply_style("TrueColor RGB Sample", rgb(255, 100, 50)))

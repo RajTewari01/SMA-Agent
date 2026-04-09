@@ -54,7 +54,6 @@ class BaseInference(ABC):
         """preprocessing the prompt"""
         return prompts.strip()
 
-
     @abstractmethod
     def generate(self, prompt: str, **kwargs) -> str:
         """Run inference on the model."""
@@ -65,6 +64,7 @@ class BaseInference(ABC):
 
     def postprocess(self, output: Any) -> Any:
         return output
+
     # =========== api endpoint =================
     def run(self, prompt: str, **kwargs) -> Any:
         prompt = self.preprocess(prompt)
