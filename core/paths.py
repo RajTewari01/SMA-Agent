@@ -78,7 +78,7 @@ def get_python_venv(name: str, str_path: bool = False, debug: bool = DEBUG) -> s
     return str(resolved) if str_path else resolved
 
 
-def get_venv_mapping() -> Dict[str, Path | None]:
+def get_venv_mapping() -> Dict[str, str | Path | None]:
     AI_VENV_PATH = get_python_venv(name="ai_venv")
     SOCIAL_VENV_PATH = get_python_venv(name="social_venv")
     return {"ai": AI_VENV_PATH, "social": SOCIAL_VENV_PATH}
@@ -110,4 +110,4 @@ check_all_assets_dir()
 for i in get_venv_mapping().values():
     if isinstance(i,str):
         print("s")
-    else : print("P")
+    
