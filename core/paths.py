@@ -29,6 +29,7 @@ VENV_DIR = __ROOT__ / "venvs"
 
 STORY_GRAMMARS_SCHEMA = __ROOT__ / "social_automation_agent/apps/story_teller/grammars/schema.gbnf"
 SEARCH_QUERIES = __ROOT__ / "config/json/search_terms.json"
+STORIES_JSON = __ROOT__ / "config/json/stories.json"
 
 #====================ASSETS SUB MAPS=====================
 
