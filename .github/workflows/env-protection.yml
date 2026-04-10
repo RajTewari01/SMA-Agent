@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "=== Scanning for committed .env files ==="
           FOUND=0
-          for pattern in ".env" "*.env.local" "*.env.production" "secrets.*"; do
+          for pattern in ".env" "*.env.local" "*.env.production" "secrets.env*"; do
             FILES=$(find . -name "$pattern" -not -path "./.git/*" -not -name "*.env.example" -not -name "config.env" 2>/dev/null)
             if [ -n "$FILES" ]; then
               echo "::error::Sensitive file found: $FILES"

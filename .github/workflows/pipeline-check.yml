@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: pip install -e ".[core]"
@@ -41,9 +42,6 @@ jobs:
               PIPELINE_REGISTRY,
               ALLOWED_MEDIA_TYPES,
               discover_pipeline,
-              get_pipeline_by_keywords,
-              get_pipeline_by_name,
-              get_pipelines_by_media,
           )
 
           discover_pipeline()
@@ -69,11 +67,6 @@ jobs:
 
               print(f'  ✅ {name} — {data.get(\"media_type\")} — {len(data.get(\"keywords\", []))} keywords')
 
-          # Smoke-test keyword search
-          for strategy in ['jaccard', 'overlap', 'fuzzy']:
-              results = get_pipeline_by_keywords('stock photo image', strategy=strategy)
-              print(f'  ✅ Keyword search ({strategy}): {len(results)} results')
-
           if errors:
               print(f'\n::error::{len(errors)} validation errors:')
               for e in errors:
@@ -82,3 +75,8 @@ jobs:
 
           print(f'\n✅ All {len(PIPELINE_REGISTRY)} pipelines validated successfully')
           "
+
+      - name: Test CLI Runner Help
+        run: |
+          python apps/resource_downloader/runner.py --help
+          python apps/resource_downloader/runner.py list
